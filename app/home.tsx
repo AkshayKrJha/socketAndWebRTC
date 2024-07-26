@@ -17,40 +17,64 @@ export default function Home() {
   });
   const [socketText, setSocketText] = useState("Hello");
   const [isLoading, setIsLoading] = useState(false);
-  useEffect(() => {
-    console.log("IP", ip);
+  const [typeTimeout, setTypeTimeout] = useState<any>(null);
+  const [typingUsers, setTypingUsers] = useState<any>(new Set());
 
-    const onConnect = () => {
-      console.log("Connected event triggered");
-      // setSocket({ connected: true, testEvent });
-      setSocket(({ connected, testEvent }) => {
-        return { connected: true, testEvent };
-      });
-    };
-    const onDisconnect = () => {
-      console.log("Disconnect Event triggered");
-      // setSocket({ connected: false, testEvent });
-      setSocket(({ connected, testEvent }) => {
-        return { connected: false, testEvent };
-      });
-    };
-    const onTestEvent = (value: any) => {
-      // setSocket({ connected, testEvent: [...testEvent, value] });
-      setSocket(({ connected, testEvent }) => {
-        return { connected, testEvent: [...testEvent, value] };
-      });
-    };
+  useEffect(
+    () => {
+      console.log("IP", ip);
 
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-    socket.on("test", onTestEvent);
+      const onConnect = () => {
+        console.log("Connected event triggered");
+        // setSocket({ connected: true, testEvent });
+        setSocket(({ connected, testEvent }) => {
+          return { connected: true, testEvent };
+        });
+      };
+      const onDisconnect = () => {
+        console.log("Disconnect Event triggered");
+        // setSocket({ connected: false, testEvent });
+        setSocket(({ connected, testEvent }) => {
+          return { connected: false, testEvent };
+        });
+      };
+      const onTestEvent = (value: any) => {
+        // setSocket({ connected, testEvent: [...testEvent, value] });
+        setSocket(({ connected, testEvent }) => {
+          return { connected, testEvent: [...testEvent, value] };
+        });
+      };
 
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-      socket.off("test", onTestEvent);
-    };
-  }, [/*testEvent, connected*/]);
+      const onTypeOn = (name: any) => {
+        setTypingUsers((typingUsers: any) => new Set([...typingUsers, name]));
+      };
+
+      const onTypeOff = (name: any) => {
+        setTypingUsers((typingUsers: any) => {
+          const typers = new Set([...typingUsers]);
+          typers.delete(name);
+          return typers;
+        });
+      };
+
+      socket.on("connect", onConnect);
+      socket.on("disconnect", onDisconnect);
+      socket.on("test", onTestEvent);
+      socket.on("taaip on", onTypeOn);
+      socket.on("taaip off", onTypeOff);
+
+      return () => {
+        socket.off("connect", onConnect);
+        socket.off("disconnect", onDisconnect);
+        socket.off("test", onTestEvent);
+        socket.off("taaip on", onTypeOn);
+        socket.off("taaip off", onTypeOff);
+      };
+    },
+    [
+      /*testEvent, connected*/
+    ]
+  );
 
   return (
     <View
@@ -71,6 +95,16 @@ export default function Home() {
           testEvent.map((event: any, index: any) => {
             return <Text key={index}>{event}</Text>;
           })}
+        <View style={{ padding: "5%", backgroundColor: "#0aa" }}>
+          {typingUsers &&
+            Array.from(typingUsers).map((user: any, index: any) => {
+              return (
+                <Text key={index}>
+                  {user} is taaiping... {"\n"}
+                </Text>
+              );
+            })}
+        </View>
       </View>
       <View
         style={{
@@ -87,7 +121,14 @@ export default function Home() {
           placeholder="Text for socket server"
           value={socketText}
           onChangeText={(v: any) => {
+            clearTimeout(typeTimeout);
+            setTypeTimeout(null);
             setSocketText(v);
+            socket.emit("typing on");
+            const t = setTimeout(() => {
+              socket.emit("typing off");
+            }, 2000);
+            setTypeTimeout(t);
           }}
         />
         <Button
@@ -99,7 +140,7 @@ export default function Home() {
             setIsLoading(true);
             socket.timeout(5000).emit("some-event", socketText, () => {
               setIsLoading(false);
-              setSocketText("")
+              setSocketText("");
             });
           }}
         />
@@ -113,18 +154,22 @@ export default function Home() {
           justifyContent: "space-evenly",
         }}
       >
-        <Button
-          title="Connect"
-          onPress={() => {
-            socket.connect();
-          }}
-        />
-        <Button
-          title="Disconnect"
-          onPress={() => {
-            socket.disconnect();
-          }}
-        />
+        {!connected && (
+          <Button
+            title="Connect"
+            onPress={() => {
+              socket.connect();
+            }}
+          />
+        )}
+        {connected && (
+          <Button
+            title="Disconnect"
+            onPress={() => {
+              socket.disconnect();
+            }}
+          />
+        )}
       </View>
     </View>
   );
