@@ -1,47 +1,26 @@
 import { socketic } from "@/components/Socket";
+import { addUsers, setIsUserConnected } from "@/store/reducer/userReducer";
+import { RootState, store } from "@/store/store";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, TextInput, View } from "react-native";
+import { Button, Pressable, Text, TextInput, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function Index() {
-  // const [ip,setIP] = useState("")
   const [name, setName] = useState("");
-  const [activeUsers, setActiveUsers] = useState<any>([]);
-  const [isUserConnected, setIsUserConnected] = useState(false);
+  const isUserConnected = useSelector(
+    (state: RootState) => state.socketReducer.isUserConnected
+  );
+  const activeSocketUsers = useSelector(
+    (state: RootState) => state.socketReducer.users
+  );
   useEffect(() => {
-    const onConnect = () => {
-      setIsUserConnected(true);
-      console.log("Active Users", activeUsers);
-    };
-    const onUsers = (users: any) => {
-      // switch from array to hashmap
-      setActiveUsers(users);
-      console.log("Users", users);
-    };
-    const onError = (err: any) => {
-      console.log(err.message);
-      if (err.message === "invalid username") {
-        setIsUserConnected(false);
-      }
-    };
-    socketic.on("connect", onConnect);
-    socketic.on("connect_error", onError);
-    socketic.on("users", onUsers);
-    return () => {
-      socketic.off("connect", onConnect);
-      socketic.off("connect_error", onError);
-      socketic.off("users", onUsers);
-    };
-  }, []);
-  useEffect(() => {
-    if (isUserConnected && activeUsers?.length) {
-      router.navigate({
+    if (isUserConnected && activeSocketUsers?.length) {
+      router.replace({
         pathname: "/home",
-        // params: { /*ip */ socketUsers: JSON.stringify(activeUsers) },
-        params: { /*ip */ socketUsers: JSON.stringify(activeUsers.filter((v:any)=>v.userID!==socketic.id)) },
       });
     }
-  }, [isUserConnected, activeUsers, router]);
+  }, [isUserConnected, activeSocketUsers, router]);
 
   return (
     <View
@@ -52,14 +31,6 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      {/* <Text>Text for Socket</Text> */}
-      {/* <TextInput
-      style={{ borderWidth: 1 }}
-      placeholder="IP Address"
-      value={ip}
-      onChangeText={(v: any) => {
-        setIP(v);
-      }}/> */}
       <TextInput
         style={{ borderWidth: 1 }}
         placeholder="User Name"
