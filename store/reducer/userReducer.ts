@@ -1,4 +1,3 @@
-import { socketic } from "@/components/Socket";
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 

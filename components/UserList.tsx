@@ -8,14 +8,9 @@ import { setUser } from "@/store/reducer/userReducer";
 
 export default function UserList() {
   // vars
-  // const activeSocketUsersList = useSelector((state: RootState) => {
-  //   return state.socketReducer.users;
-  // });
-  // check with useref
   const oldUsers = useSelector(
     (state: RootState) => state.socketReducer.oldUsers
   );
-  // const oldUsers = store.getState().socketReducer.oldUsers;
   const [activeSocketUsers, setActiveSocketUsers] = useState<any>(oldUsers);
   useEffect(() => {
     const onUsers = (users: any) => {

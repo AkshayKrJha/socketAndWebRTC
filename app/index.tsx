@@ -1,9 +1,8 @@
 import { socketic } from "@/components/Socket";
-import { addUsers, setIsUserConnected } from "@/store/reducer/userReducer";
-import { RootState, store } from "@/store/store";
+import { RootState } from "@/store/store";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, Pressable, Text, TextInput, View } from "react-native";
+import { Button, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 
 export default function Index() {
@@ -45,8 +44,6 @@ export default function Index() {
           // connect to socket
           socketic.auth = { name };
           socketic.connect();
-          // navigate to home
-          // router.navigate({ pathname: "/home" /*, params: {ip}*/ });
         }}
       />
     </View>

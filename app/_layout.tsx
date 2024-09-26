@@ -29,16 +29,6 @@ export default function RootLayout() {
     const onTestEvent = (value: any) => {
       store.dispatch(setTestEvent(value));
     };
-    const onUserConnects = (user: any) => {
-      store.dispatch(adduser(user));
-    };
-
-    const onUserDisconnects = (user: any) => {
-      // delete from active users
-      store.dispatch(redUserbyID(user));
-      console.log(user, "disconnects");
-    };
-
     const onUsers = (users: any) => {
       store.dispatch(addUsers(users));
     };
@@ -65,8 +55,6 @@ export default function RootLayout() {
     socket.on("connect_error", onError);
     socket.on("disconnect", onDisconnect);
     socket.on("test", onTestEvent);
-    // socket.on("user connected", onUserConnects);
-    // socket.on("user disconnected", onUserDisconnects);
     socket.on("private metzage", onMetzage);
 
     return () => {
@@ -75,8 +63,6 @@ export default function RootLayout() {
       socket.off("connect_error", onError);
       socket.off("disconnect", onDisconnect);
       socket.off("test", onTestEvent);
-      // socket.off("user connected", onUserConnects);
-      // socket.off("user disconnected", onUserDisconnects);
       socket.off("private metzage", onMetzage);
       // socket.disconnect(); // to be checked
     };

@@ -1,14 +1,10 @@
 import { socketic } from "@/components/Socket";
 import {
-  addCzat,
-  clearUnread,
-  selectMetzages,
-  setUser,
+  selectMetzages
 } from "@/store/reducer/userReducer";
-import { RootState, store } from "@/store/store";
-import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
-import { Pressable, Text, TextInput, View, FlatList } from "react-native";
+import { RootState } from "@/store/store";
+import { useState } from "react";
+import { FlatList, Pressable, Text, TextInput, View } from "react-native";
 import { useSelector } from "react-redux";
 
 const PrivateCzat = () => {

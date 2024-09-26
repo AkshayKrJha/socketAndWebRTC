@@ -1,24 +1,13 @@
 import { socketic as socket } from "@/components/Socket";
 import UserList from "@/components/UserList";
-import {
-  addCzat,
-  adduser,
-  addUsers,
-  delUsers,
-  redUserbyID,
-  setIsUserConnected,
-  setTestEvent,
-} from "@/store/reducer/userReducer";
-import { RootState, store } from "@/store/store";
-import { router } from "expo-router";
+import { RootState } from "@/store/store";
 import { useEffect, useState } from "react";
 import {
   Button,
   FlatList,
-  Pressable,
   Text,
   TextInput,
-  View,
+  View
 } from "react-native";
 import { useSelector } from "react-redux";
 
@@ -38,20 +27,6 @@ export default function Home() {
   });
 
   useEffect(() => {
-    const onConnect = () => {
-      console.log("Connected event triggered");
-      store.dispatch(setIsUserConnected(true));
-    };
-    const onDisconnect = () => {
-      console.log("Disconnect Event triggered");
-      store.dispatch(setIsUserConnected(false));
-      // setActiveUsers([]);
-      store.dispatch(delUsers());
-    };
-    const onTestEvent = (value: any) => {
-      store.dispatch(setTestEvent(value));
-    };
-
     const onTypeOn = (name: any) => {
       setTypingUsers((typingUsers: any) => new Set([...typingUsers, name]));
     };
@@ -64,50 +39,12 @@ export default function Home() {
       });
     };
 
-    const onUserConnects = (user: any) => {
-      store.dispatch(adduser(user));
-    };
-
-    const onUserDisconnects = (user: any) => {
-      // delete from active users
-      store.dispatch(redUserbyID(user));
-      console.log(user, "disconnects");
-    };
-
-    const onUsers = (users: any) => {
-      store.dispatch(addUsers(users));
-    };
-
-    const onMetzage = ({ content, from }: any) => {
-      console.log("Message Received", { content, from });
-      const mestzage = {
-        received: true,
-        content,
-        from,
-      };
-      store.dispatch(addCzat(mestzage));
-    };
-
-    // socket.on("connect", onConnect);
-    // socket.on("users", onUsers);
-    // socket.on("disconnect", onDisconnect);
-    // socket.on("test", onTestEvent);
     socket.on("taaip on", onTypeOn);
     socket.on("taaip off", onTypeOff);
-    // socket.on("user connected", onUserConnects);
-    // socket.on("private metzage", onMetzage);
 
     return () => {
-      // socket.off("connect", onConnect);
-      // socket.off("users", onUsers);
-      // socket.off("disconnect", onDisconnect);
-      // socket.off("test", onTestEvent);
       socket.off("taaip on", onTypeOn);
       socket.off("taaip off", onTypeOff);
-      // socket.off("user connected", onUserConnects);
-      // socket.off("user disconnected", onUserDisconnects);
-      // socket.off("private metzage", onMetzage);
-      // socket.disconnect(); // to be checked
     };
   }, []);
 
