@@ -5,11 +5,14 @@ import { useEffect, useState } from "react";
 import {
   Button,
   FlatList,
+  Pressable,
   Text,
   TextInput,
-  View
+  View,
 } from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
+import { router } from "expo-router";
 
 export default function Home() {
   const testEvent = useSelector(
@@ -153,6 +156,23 @@ export default function Home() {
           />
         )}
       </View>
+      <Pressable
+        style={{
+          position: "absolute",
+          right: "10%",
+          bottom: "30%",
+          padding: "2%",
+          backgroundColor: "#00f",
+          elevation: 20,
+          borderRadius: 40,
+        }}
+        onPress={() => {
+          // enter into room page
+          router.navigate("/room")
+        }}
+      >
+        <Ionicons name="add" size={48} color="#fff" />
+      </Pressable>
     </View>
   );
 }

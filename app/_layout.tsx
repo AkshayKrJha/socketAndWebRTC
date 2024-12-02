@@ -35,20 +35,24 @@ export default function RootLayout() {
 
     const onMetzage = ({ content, from, received }: any) => {
       console.log("Message Received", { content, from });
-      const mestzage = {
+      const metzage = {
         received,
         content,
         from,
       };
       // store.dispatch(addCzat(mestzage));
-      store.dispatch(addMetzage(mestzage));
+      store.dispatch(addMetzage(metzage));
     };
     const onError = (err: any) => {
       console.log(err.message);
-      if (err.message === "invalid username") {
+      if (
+        err.message === "invalid username" ||
+        err.message === "User already exists"
+      ) {
         // setIsUserConnected(false);
         store.dispatch(setIsUserConnected(false));
       }
+      alert(err.message);
     };
     socket.on("connect", onConnect);
     socket.on("users", onUsers);
@@ -72,8 +76,8 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        {/* <Stack.Screen name="home" />
-        <Stack.Screen name="chatpage" /> */}
+        <Stack.Screen name="room" />
+        {/* <Stack.Screen name="chatpage" /> */}
       </Stack>
     </Provider>
   );

@@ -71,12 +71,21 @@ const socketSlice = createSlice({
       //   v?.for === from;
       // });
       // console.log("Previous metzages", metzagesList);
-      state.metzages?.push({
-        message: content,
-        for: from,
-        received,
-        timeStamp: +new Date(),
-      });
+      // state.metzages?.push({
+      //   message: content,
+      //   for: from,
+      //   received,
+      //   timeStamp: +new Date(),
+      // });
+      state.metzages = [
+        ...state.metzages,
+        {
+          message: content,
+          for: from,
+          received,
+          timeStamp: +new Date(),
+        },
+      ];
       // const newMetzages = state.metzages?.get(from);
       // state.metzages?.set(from, metzagesList);
     },
